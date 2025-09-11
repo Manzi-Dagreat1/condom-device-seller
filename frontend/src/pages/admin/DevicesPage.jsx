@@ -16,6 +16,7 @@ import {
 import { toast } from 'react-hot-toast';
 import { deviceAPI } from '../../services/api';
 import DeviceProductsModal from '../../components/admin/DeviceProductsModal';
+import DeviceQRModal from '../../components/admin/DeviceQRModal';
 
 function formatDate(dateString) {
   if (!dateString) return 'Never';
@@ -54,6 +55,8 @@ export default function DevicesPage() {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(null);
   const queryClient = useQueryClient();
 
   const openProductsModal = (deviceId) => {
@@ -64,6 +67,16 @@ export default function DevicesPage() {
   const closeProductsModal = () => {
     setIsProductsModalOpen(false);
     setSelectedDeviceId(null);
+  };
+
+  const openQRModal = (device) => {
+    setSelectedDevice(device);
+    setIsQRModalOpen(true);
+  };
+
+  const closeQRModal = () => {
+    setIsQRModalOpen(false);
+    setSelectedDevice(null);
   };
 
   // Fetch devices
@@ -237,6 +250,13 @@ export default function DevicesPage() {
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           <div className="flex justify-end space-x-2">
                             <button
+                              onClick={() => openQRModal(device)}
+                              className="text-blue-600 hover:text-blue-900 mr-3"
+                              title="Show QR Code"
+                            >
+                              <QrCodeIcon className="h-5 w-5" />
+                            </button>
+                            <button
                               onClick={() => openProductsModal(device.id)}
                               className="text-gray-400 hover:text-gray-500 mr-3"
                               title="Manage Products"
@@ -284,6 +304,11 @@ export default function DevicesPage() {
         deviceId={selectedDeviceId}
         isOpen={isProductsModalOpen}
         onClose={closeProductsModal}
+      />
+      <DeviceQRModal 
+        device={selectedDevice}
+        isOpen={isQRModalOpen}
+        onClose={closeQRModal}
       />
     </div>
   );
